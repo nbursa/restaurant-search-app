@@ -26,17 +26,28 @@
 html,
 body {
   height: 100%;
+  width: 100%;
   font-family: var(--font-family);
   line-height: 1.6;
   color: var(--text-color-light);
   background-color: var(--background-color-light);
 }
 
-body {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--background-color-light);
+#app {
+  height: 100vh;
+  width: 100vw;
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+
+.nav {
+  grid-row: 1;
+}
+
+.main {
+  grid-row: 2;
+  overflow: hidden;
+  overflow-y: auto;
 }
 
 a {
