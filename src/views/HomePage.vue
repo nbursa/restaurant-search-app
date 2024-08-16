@@ -5,12 +5,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import { RouterLink } from "vue-router";
+import { defineComponent } from 'vue';
+import { RouterLink } from 'vue-router';
 
 export default defineComponent({
   components: { RouterLink },
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.home-page {
+  padding: 20px;
+}
+</style>
