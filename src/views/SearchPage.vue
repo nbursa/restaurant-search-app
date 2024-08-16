@@ -62,6 +62,10 @@ export default defineComponent({
 </script>
 
 <style scoped>
+h1 {
+  font-size: 3rem;
+  text-align: center;
+}
 .search-page {
   display: flex;
   flex-direction: column;

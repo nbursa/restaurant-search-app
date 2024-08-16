@@ -75,22 +75,18 @@ input {
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
+  height: 45px;
 }
 
 .submit-button {
   padding: 10px 20px;
-  background-color: #000;
-  color: white;
   border: none;
+  height: 50px;
   border-radius: 5px;
   cursor: pointer;
 }
 
-.submit-button:hover {
-  background-color: #333;
-}
-
-@media (min-width: 480px) and (max-width: 767px) {
+@media (min-width: 520px) and (max-width: 767px) {
   .form {
     flex-direction: row;
     flex-wrap: nowrap;
@@ -100,7 +96,7 @@ input {
   }
 
   .form-group {
-    margin-bottom: 10px;
+    margin-bottom: 0;
   }
 
   label {
@@ -115,6 +111,8 @@ input {
   .submit-button {
     padding: 8px 16px;
     font-size: 0.75em;
+    align-self: self-end;
+    height: 47px;
   }
 }
 
@@ -123,6 +121,8 @@ input {
     flex-direction: row;
     gap: 10px;
     align-items: flex-end;
+    max-width: 768px;
+    margin: 0 auto;
   }
 
   .form-group {
@@ -133,6 +133,7 @@ input {
   .submit-button {
     flex: 1;
     margin-top: 0;
+    height: 47px;
   }
 }
 </style>

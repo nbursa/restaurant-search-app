@@ -52,12 +52,12 @@ body {
 
 a {
   text-decoration: none;
-  color: var(--primary-color);
+  color: var(--text-color-light);
   transition: color 0.3s ease;
 }
 
 a:hover {
-  color: #535bf2;
+  font-weight: bold;
 }
 
 button {
@@ -113,8 +113,12 @@ ul {
     --button-bg-color-light: var(--button-bg-color-dark);
   }
 
+  a {
+    color: var(--text-color-light);
+  }
+
   a:hover {
-    color: #747bff;
+    color: #999;
   }
 
   button {

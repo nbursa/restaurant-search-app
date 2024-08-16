@@ -26,11 +26,11 @@ li {
 }
 
 a {
-  color: white;
   text-decoration: none;
 }
 
 a.router-link-active {
   font-weight: bold;
+  text-shadow: aliceblue;
 }
 </style>

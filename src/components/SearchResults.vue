@@ -6,8 +6,10 @@
       <p>{{ result.availability.page.subtitle }}</p>
       <button @click="book(result.post)">Book Now</button>
     </div>
-    <button v-if="canLoadMore" @click="loadMore">Load More</button>
   </div>
+  <button v-if="canLoadMore" class="load-more" @click="loadMore">
+    Load More
+  </button>
 </template>
 
 <script lang="ts">
@@ -55,10 +57,16 @@ export default defineComponent({
 </script>
 
 <style scoped>
+h2 {
+  font-size: 2rem;
+  margin: 2rem auto;
+  text-align: center;
+}
 .results {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  margin-bottom: 20px;
 }
 
 .result {
@@ -72,6 +80,10 @@ export default defineComponent({
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
+  }
+  .load-more {
+    width: fit-content;
+    margin: 0 auto;
   }
 }
 </style>

@@ -15,6 +15,10 @@ export default defineComponent({
 
 <style scoped>
 .home-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 20px;
+  font-size: 3rem;
 }
 </style>
