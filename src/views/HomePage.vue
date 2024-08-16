@@ -1,7 +1,6 @@
 <template>
   <div class="home-page">
     <h1>Home page</h1>
-    <RouterLink to="/search">Search Restaurants</RouterLink>
   </div>
 </template>
 
