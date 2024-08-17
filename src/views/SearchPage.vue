@@ -77,5 +77,9 @@ h1 {
   flex-direction: column;
   width: 100%;
   padding: 20px;
+  align-items: center;
+  justify-content: center;
+  max-width: 1268px;
+  margin: 0 auto;
 }
 </style>

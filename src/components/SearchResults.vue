@@ -223,7 +223,7 @@ h2 {
   .results {
     flex-direction: row;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: flex-start;
   }
 
   .load-more {
