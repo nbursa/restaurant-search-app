@@ -144,6 +144,10 @@ export const useSearchStore = defineStore('search', {
             },
           },
         );
+        if (response.data.posts.length < 1) {
+          this.canLoadMore = false;
+          return;
+        }
         this.results = [...this.results, ...response.data.posts];
         this.canLoadMore = this.results.length < this.totalResults;
       } catch (error) {
