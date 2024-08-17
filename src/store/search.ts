@@ -7,15 +7,31 @@ interface Criteria {
   time: string;
 }
 
+interface RecommendedOption {
+  id: string;
+  method: string;
+  text: string;
+  time: string;
+}
+
 interface Result {
   post: {
     slug: string;
     venue_name: string;
+    score: number;
   };
   availability: {
     page: {
+      title: string;
       subtitle: string;
     };
+    formattedRequest: {
+      date: string;
+      time: string;
+      size: string;
+      service: string;
+    };
+    recommended: RecommendedOption[];
   };
 }
 
@@ -38,11 +54,16 @@ export const useSearchStore = defineStore('search', {
   actions: {
     async loginAnonymously() {
       try {
+        this.loading = true;
+        this.error = '';
+
         const response = await axios.post(`${API_BASE_URL}/loginAnonymously`);
         this.jwtToken = response.data.jwt_token;
       } catch (error) {
         console.error('Error:', error);
         this.error = 'Failed to log in anonymously.';
+      } finally {
+        this.loading = false;
       }
     },
 
@@ -86,6 +107,9 @@ export const useSearchStore = defineStore('search', {
 
     async fetchResults() {
       try {
+        this.loading = true;
+        this.error = '';
+
         const response = await axios.post(
           `${API_BASE_URL}/search_request`,
           { search_id: this.searchId },
@@ -95,18 +119,21 @@ export const useSearchStore = defineStore('search', {
             },
           },
         );
-        console.log('response res:', response);
         this.results = response.data.posts;
         this.totalResults = response.data.total;
         this.canLoadMore = this.results.length < this.totalResults;
       } catch (error) {
         console.error('Error:', error);
         this.error = 'Failed to fetch search results.';
+      } finally {
+        this.loading = false;
       }
     },
 
     async loadMoreResults() {
       this.loading = true;
+      this.error = '';
+
       try {
         const response = await axios.post(
           `${API_BASE_URL}/search_request`,

@@ -1,5 +1,11 @@
 <template>
-  <form @submit.prevent="submitSearch" class="form">
+  <div v-if="results" class="search-status">
+    <div>
+      Results for inquiry: {{ `${size} guests, on ${date}, at ${time}` }}
+    </div>
+    <button @click="resetSearch">New Search</button>
+  </div>
+  <form v-else @submit.prevent="submitSearch" class="form">
     <div class="form-group">
       <label for="size">Number of Guests</label>
       <input type="number" id="size" v-model="size" required />
@@ -20,7 +26,13 @@
 import { defineComponent, ref } from 'vue';
 
 export default defineComponent({
-  emits: ['submit'],
+  props: {
+    results: {
+      type: Boolean,
+      required: true,
+    },
+  },
+  emits: ['submit', 'reset'],
   setup(_, { emit }) {
     const size = ref<number>(2);
 
@@ -42,11 +54,19 @@ export default defineComponent({
       });
     };
 
+    const resetSearch = () => {
+      size.value = 2;
+      date.value = currentDateString;
+      time.value = currentTimeString;
+      emit('reset');
+    };
+
     return {
       size,
       date,
       time,
       submitSearch,
+      resetSearch,
     };
   },
 });
@@ -84,6 +104,12 @@ input {
   height: 50px;
   border-radius: 5px;
   cursor: pointer;
+}
+
+.search-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 @media (min-width: 520px) and (max-width: 767px) {
