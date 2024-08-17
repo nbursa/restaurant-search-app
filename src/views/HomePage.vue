@@ -1,6 +1,6 @@
 <template>
   <div class="home-page">
-    <h1>Home page</h1>
+    <RouterLink to="/search" class="cta"><h1>Restaurant Search</h1></RouterLink>
   </div>
 </template>
 
@@ -16,9 +16,12 @@ export default defineComponent({
 <style scoped>
 .home-page {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 20px;
+}
+h1 {
   font-size: 3rem;
 }
 </style>
