@@ -3,7 +3,12 @@
   <div class="results-container">
     <div v-if="loading" class="loading">Loading...</div>
     <div v-if="results.length" class="results">
-      <div v-for="result in results" :key="result.post.slug" class="result">
+      <div
+        v-for="(result, index) in results"
+        :key="result.post.slug"
+        :style="{ '--delay': `${index * 0.1}s` }"
+        class="result"
+      >
         <div class="result-title">
           <h3>{{ result.post.venue_name }}</h3>
           <div class="small">Score: {{ result.post.score.toFixed(2) }}</div>
@@ -102,16 +107,16 @@ export default defineComponent({
 
     const searchStore = useSearchStore();
 
-    const loadMore = () => {
-      emit('loadMore');
-    };
-
     const selectedOption = (result: Result): RecommendedOption | null => {
       const selectedOptionIndex = selectedOptions.value[result.post.slug];
       if (selectedOptionIndex !== undefined && selectedOptionIndex !== null) {
         return result.availability.recommended[selectedOptionIndex];
       }
       return null;
+    };
+
+    const loadMore = () => {
+      emit('loadMore');
     };
 
     const book = (result: Result) => {
@@ -170,7 +175,6 @@ h2 {
   flex-direction: column;
   gap: 20px;
   margin-bottom: 20px;
-  overflow-y: auto;
 }
 
 .result {
@@ -178,6 +182,16 @@ h2 {
   border-radius: 10px;
   border: 1px solid grey;
   flex: 1 1 calc(100% - 20px);
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.5s forwards;
+  animation-delay: var(--delay);
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+  }
 }
 
 .result-title {
