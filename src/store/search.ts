@@ -1,39 +1,6 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
-
-interface Criteria {
-  size: string;
-  date: string;
-  time: string;
-}
-
-interface RecommendedOption {
-  id: string;
-  method: string;
-  text: string;
-  time: string;
-}
-
-interface Result {
-  post: {
-    slug: string;
-    venue_name: string;
-    score: number;
-  };
-  availability: {
-    page: {
-      title: string;
-      subtitle: string;
-    };
-    formattedRequest: {
-      date: string;
-      time: string;
-      size: string;
-      service: string;
-    };
-    recommended: RecommendedOption[];
-  };
-}
+import { Criteria, Result } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const MARKETPLACE_ID = import.meta.env.VITE_MARKETPLACE_ID;

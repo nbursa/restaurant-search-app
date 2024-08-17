@@ -20,12 +20,7 @@ import { computed, defineComponent } from 'vue';
 import { useSearchStore } from '../store/search';
 import SearchForm from '../components/SearchForm.vue';
 import SearchResults from '../components/SearchResults.vue';
-
-interface Criteria {
-  size: string;
-  date: string;
-  time: string;
-}
+import { Criteria } from '../types';
 
 export default defineComponent({
   components: {

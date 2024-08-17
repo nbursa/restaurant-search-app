@@ -61,34 +61,7 @@
 <script lang="ts">
 import { computed, defineComponent, ref } from 'vue';
 import { useSearchStore } from '../store/search';
-
-interface RecommendedOption {
-  id: string;
-  method: string;
-  text: string;
-  time: string;
-}
-
-interface Result {
-  post: {
-    slug: string;
-    venue_name: string;
-    score: number;
-  };
-  availability: {
-    page: {
-      title: string;
-      subtitle: string;
-    };
-    formattedRequest: {
-      date: string;
-      time: string;
-      size: string;
-      service: string;
-    };
-    recommended: RecommendedOption[];
-  };
-}
+import { RecommendedOption, Result } from '../types';
 
 export default defineComponent({
   props: {
