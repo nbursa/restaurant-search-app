@@ -52,7 +52,9 @@ export default defineComponent({
       result: Result;
       option: RecommendedOption;
     }) => {
-      alert(`Booking at ${result.post.venue_name} at ${option.time}`);
+      alert(
+        `Booking at ${result.post.venue_name}, ${option.text} at ${option.time}`,
+      );
     };
 
     return {
