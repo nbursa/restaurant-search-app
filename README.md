@@ -36,7 +36,11 @@ A Vue 3 application designed for searching restaurants. This project uses Vite f
    npm install
    ```
 
-4. IMPORTANT: Add provided .env file to project root
+4. IMPORTANT:
+
+   ```bash
+   Add provided .env file to project root
+   ```
 
 ## Development
 
