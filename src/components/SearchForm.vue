@@ -18,14 +18,22 @@
       <label for="time">Time</label>
       <input type="time" id="time" v-model="time" required />
     </div>
-    <button type="submit" class="submit-button">Search</button>
+    <button type="submit" class="submit-button">
+      <Loader :visible="loading" size="small" />
+      <span v-if="!loading">Search</span>
+    </button>
   </form>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { computed, defineComponent, ref } from 'vue';
+import Loader from './Loader.vue';
+import { useSearchStore } from '../store/search';
 
 export default defineComponent({
+  components: {
+    Loader,
+  },
   props: {
     results: {
       type: Boolean,
@@ -34,6 +42,9 @@ export default defineComponent({
   },
   emits: ['submit', 'reset'],
   setup(_, { emit }) {
+    const searchStore = useSearchStore();
+    const loading = computed(() => searchStore.loading);
+
     const size = ref<number>(2);
 
     const currentDate = new Date();
@@ -67,6 +78,7 @@ export default defineComponent({
       time,
       submitSearch,
       resetSearch,
+      loading,
     };
   },
 });
@@ -99,7 +111,8 @@ input {
 }
 
 .submit-button {
-  padding: 10px 20px;
+  position: relative;
+  padding: 5px 20px;
   border: none;
   height: 50px;
   border-radius: 5px;

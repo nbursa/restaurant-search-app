@@ -1,7 +1,8 @@
 <template>
   <div v-if="error" class="error">{{ error }}</div>
   <div class="results-container">
-    <div v-if="loading" class="loading">Loading...</div>
+    <!-- Show loader only if there are results, and cover results container -->
+    <Loader :visible="!!results.length && loading" position="sticky" />
     <div v-if="results.length" class="results">
       <div
         v-for="(result, index) in results"
@@ -71,9 +72,13 @@
 <script lang="ts">
 import { computed, defineComponent, ref } from 'vue';
 import { useSearchStore } from '../store/search';
+import Loader from './Loader.vue';
 import { RecommendedOption, Result } from '../types';
 
 export default defineComponent({
+  components: {
+    Loader,
+  },
   props: {
     results: {
       type: Array as () => Result[],
@@ -152,16 +157,16 @@ h2 {
 }
 
 .results-container {
+  position: relative;
   overflow-y: auto;
   margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .results {
-  position: relative;
   display: flex;
   flex-direction: column;
   gap: 20px;
-  margin-bottom: 20px;
 }
 
 .result {
@@ -170,14 +175,19 @@ h2 {
   border: 1px solid grey;
   flex: 1 1 calc(100% - 20px);
   opacity: 0;
-  transform: translateY(20px);
-  animation: fadeInUp 0.5s forwards;
+  transform: translateY(0);
+  animation: fadeInUp 0.5s forwards ease-out;
   animation-delay: var(--delay);
 }
 
 @keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
   to {
     opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -216,20 +226,6 @@ h2 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-}
-
-.loading {
-  background-color: rgba(255, 255, 255, 255, 0.1);
-  backdrop-filter: blur(2px);
-  position: sticky;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1001;
 }
 
 .error {
