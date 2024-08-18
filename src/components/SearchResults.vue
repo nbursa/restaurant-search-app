@@ -13,7 +13,7 @@
           <h3>{{ result.post.venue_name }}</h3>
           <div class="small">Score: {{ result.post.score.toFixed(2) }}</div>
         </div>
-        <p>
+        <p class="result-text">
           {{ result.availability.page.title }}
           {{
             formatString(
@@ -28,6 +28,7 @@
           <div
             v-for="(option, index) in result.availability.recommended"
             :key="index"
+            class="result-option"
           >
             <label>
               <input
@@ -40,12 +41,21 @@
             </label>
           </div>
         </div>
-        <button
-          @click="book(result)"
-          :disabled="selectedOption(result) === null"
-        >
-          Book Now
-        </button>
+        <div class="result-controls">
+          <button
+            @click="book(result)"
+            :disabled="selectedOption(result) === null"
+          >
+            Book Now
+          </button>
+          <button
+            v-if="selectedOption(result)"
+            class="clear-result"
+            @click="clearSelection(result)"
+          >
+            Clear
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -88,6 +98,10 @@ export default defineComponent({
       return null;
     };
 
+    const clearSelection = (result: Result) => {
+      selectedOptions.value[result.post.slug] = null;
+    };
+
     const loadMore = () => {
       emit('loadMore');
     };
@@ -95,8 +109,7 @@ export default defineComponent({
     const book = (result: Result) => {
       const option = selectedOption(result);
       if (option) {
-        alert(`Booking at ${result.post.venue_name} at ${option.time}`);
-        emit('bookNow', result);
+        emit('bookNow', { result, option });
       } else {
         alert('Please select a booking option.');
       }
@@ -125,6 +138,7 @@ export default defineComponent({
       formatString,
       loading,
       error,
+      clearSelection,
     };
   },
 });
@@ -171,16 +185,37 @@ h2 {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.result-title h3 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.result-title .small {
+  font-size: 13px;
+}
+
+.result-text {
+  font-size: 0.9rem;
 }
 
 .result-options {
   margin-bottom: 20px;
 }
 
-.load-more {
-  width: 100%;
-  align-self: center;
-  margin-top: 20px;
+.result-option label {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 10px;
+}
+
+.result-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .loading {

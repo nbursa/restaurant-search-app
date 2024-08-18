@@ -20,7 +20,7 @@ import { computed, defineComponent } from 'vue';
 import { useSearchStore } from '../store/search';
 import SearchForm from '../components/SearchForm.vue';
 import SearchResults from '../components/SearchResults.vue';
-import { Criteria } from '../types';
+import { Criteria, Result, RecommendedOption } from '../types';
 
 export default defineComponent({
   components: {
@@ -45,8 +45,14 @@ export default defineComponent({
     const results = computed(() => searchStore.results);
     const canLoadMore = computed(() => searchStore.canLoadMore);
 
-    const bookNow = (result: any) => {
-      alert(`Booking at ${result.venue_name} at ${result.subtitle}`);
+    const bookNow = ({
+      result,
+      option,
+    }: {
+      result: Result;
+      option: RecommendedOption;
+    }) => {
+      alert(`Booking at ${result.post.venue_name} at ${option.time}`);
     };
 
     return {

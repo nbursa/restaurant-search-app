@@ -30,7 +30,11 @@ export const useSearchStore = defineStore('search', {
         this.jwtToken = response.data.jwt_token;
       } catch (error) {
         console.error('Error:', error);
-        this.error = 'Failed to log in anonymously.';
+        if (axios.isAxiosError(error) && error.response) {
+          this.error = `Login failed: ${error.response.status} - ${error.response.data.message || error.response.statusText}`;
+        } else {
+          this.error = 'An unexpected error occurred while logging in.';
+        }
       } finally {
         this.loading = false;
       }
@@ -71,7 +75,14 @@ export const useSearchStore = defineStore('search', {
         await this.fetchResults(); // Fetch initial search results
       } catch (error) {
         console.error('Error:', error);
-        this.error = 'Failed to search restaurants.';
+        if (axios.isAxiosError(error) && error.response) {
+          this.error = `Search failed: ${error.response.status} - ${error.response.data.message || error.response.statusText}`;
+        } else if (!this.jwtToken) {
+          this.error =
+            'Missing authentication token. Please try logging in again.';
+        } else {
+          this.error = 'An unexpected error occurred during the search.';
+        }
       } finally {
         this.loading = false;
       }
@@ -98,7 +109,13 @@ export const useSearchStore = defineStore('search', {
         this.canLoadMore = this.results.length < this.totalResults;
       } catch (error) {
         console.error('Error:', error);
-        this.error = 'Failed to fetch search results.';
+        if (axios.isAxiosError(error) && error.response) {
+          this.error = `Fetching results failed: ${error.response.status} - ${error.response.data.message || error.response.statusText}`;
+        } else if (!this.searchId) {
+          this.error = 'Search ID is missing. Please try searching again.';
+        } else {
+          this.error = 'An unexpected error occurred while fetching results.';
+        }
       } finally {
         this.loading = false;
       }
@@ -127,7 +144,12 @@ export const useSearchStore = defineStore('search', {
         this.canLoadMore = this.results.length < this.totalResults;
       } catch (error) {
         console.error('Error:', error);
-        this.error = 'Failed to load more results.';
+        if (axios.isAxiosError(error) && error.response) {
+          this.error = `Loading more results failed: ${error.response.status} - ${error.response.data.message || error.response.statusText}`;
+        } else {
+          this.error =
+            'An unexpected error occurred while loading more results.';
+        }
       } finally {
         this.loading = false;
       }
