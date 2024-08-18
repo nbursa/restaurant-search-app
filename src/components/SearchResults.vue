@@ -27,16 +27,20 @@
         </p>
         <div class="result-options">
           <div
-            v-for="(option, index) in result.availability.recommended"
-            :key="index"
+            v-for="(option, optionIndex) in result.availability.recommended"
+            :key="optionIndex"
             class="result-option"
           >
             <label>
               <input
                 type="radio"
-                :name="`booking-option-${result.post.slug}`"
-                :value="index"
-                v-model="selectedOptions[result.post.slug]"
+                :name="`booking-option`"
+                :value="optionIndex"
+                :checked="
+                  selectedSlug === result.post.slug &&
+                  selectedOptionIndex === optionIndex
+                "
+                @change="selectOption(result.post.slug, optionIndex)"
               />
               {{ option.text }} at {{ option.time }}
             </label>
@@ -45,14 +49,16 @@
         <div class="result-controls">
           <button
             @click="book(result)"
-            :disabled="selectedOption(result) === null"
+            :disabled="
+              selectedSlug !== result.post.slug || selectedOptionIndex === null
+            "
           >
             Book Now
           </button>
           <button
-            v-if="selectedOption(result)"
+            v-if="selectedSlug === result.post.slug"
             class="clear-result"
-            @click="clearSelection(result)"
+            @click="clearSelection"
           >
             Clear
           </button>
@@ -73,7 +79,7 @@
 import { computed, defineComponent, ref } from 'vue';
 import { useSearchStore } from '../store/search';
 import Loader from './Loader.vue';
-import { RecommendedOption, Result } from '../types';
+import { Result } from '../types';
 
 export default defineComponent({
   components: {
@@ -91,33 +97,36 @@ export default defineComponent({
   },
   emits: ['loadMore', 'bookNow'],
   setup(_, { emit }) {
-    const selectedOptions = ref<Record<string, number | null>>({});
+    const selectedSlug = ref<string | null>(null);
+    const selectedOptionIndex = ref<number | null>(null);
 
     const searchStore = useSearchStore();
 
-    const selectedOption = (result: Result): RecommendedOption | null => {
-      const selectedOptionIndex = selectedOptions.value[result.post.slug];
-      if (selectedOptionIndex !== undefined && selectedOptionIndex !== null) {
-        return result.availability.recommended[selectedOptionIndex];
-      }
-      return null;
+    const selectOption = (resultSlug: string, optionIndex: number) => {
+      selectedSlug.value = resultSlug;
+      selectedOptionIndex.value = optionIndex;
     };
 
-    const clearSelection = (result: Result) => {
-      selectedOptions.value[result.post.slug] = null;
-    };
-
-    const loadMore = () => {
-      emit('loadMore');
+    const clearSelection = () => {
+      selectedSlug.value = null;
+      selectedOptionIndex.value = null;
     };
 
     const book = (result: Result) => {
-      const option = selectedOption(result);
-      if (option) {
+      if (
+        selectedSlug.value === result.post.slug &&
+        selectedOptionIndex.value !== null
+      ) {
+        const option =
+          result.availability.recommended[selectedOptionIndex.value];
         emit('bookNow', { result, option });
       } else {
         alert('Please select a booking option.');
       }
+    };
+
+    const loadMore = () => {
+      emit('loadMore');
     };
 
     const formatString = (
@@ -138,12 +147,13 @@ export default defineComponent({
     return {
       loadMore,
       book,
-      selectedOptions,
-      selectedOption,
+      selectedSlug,
+      selectedOptionIndex,
       formatString,
       loading,
       error,
       clearSelection,
+      selectOption,
     };
   },
 });
