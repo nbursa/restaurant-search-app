@@ -34,16 +34,19 @@ export default defineComponent({
     const showResults = ref<Boolean>(false);
 
     const performSearch = async (criteria: Criteria) => {
+      // Trigger search with the given criteria
       await searchStore.searchRestaurants(criteria);
-      showResults.value = true;
+      showResults.value = true; // Show results after search completes
     };
 
     const resetSearch = () => {
+      // Clear previous search results and hide results section
       searchStore.results = [];
       showResults.value = false;
     };
 
     const loadMore = async () => {
+      // Load more results if available
       await searchStore.loadMoreResults();
     };
 
@@ -58,6 +61,7 @@ export default defineComponent({
       option: RecommendedOption;
     }) => {
       alert(
+        // Handle booking action for the selected restaurant and option
         `Booking at ${result.post.venue_name}, ${option.text} at ${option.time}`,
       );
     };

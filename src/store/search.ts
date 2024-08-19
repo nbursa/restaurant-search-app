@@ -22,7 +22,7 @@ export const useSearchStore = defineStore('search', {
     async searchRestaurants(criteria: Criteria): Promise<void> {
       const authStore = useAuthStore();
 
-      // Ensure a valid JWT token is available
+      // Ensure a valid JWT token is available before making requests
       if (!authStore.jwtToken) {
         await authStore.loginAnonymously();
       }
@@ -56,7 +56,7 @@ export const useSearchStore = defineStore('search', {
         await this.fetchResults(); // Fetch initial search results
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
-          // Check for token expiration error
+          // Handle specific API errors, like token expiration
           if (
             error.response.status === 400 &&
             error.response.data.message === '"Token expired"'
