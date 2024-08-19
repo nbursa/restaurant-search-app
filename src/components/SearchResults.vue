@@ -1,6 +1,14 @@
 <template>
   <div v-if="error" class="error">{{ error }}</div>
-  <div class="results-container">
+
+  <div class="toggle-container">
+    <label>
+      <input type="checkbox" v-model="useInfiniteScroll" />
+      Infinite Scrolling
+    </label>
+  </div>
+
+  <div class="results-container" @scroll="handleScroll">
     <Loader :visible="!!results.length && loading" position="fixed" />
     <transition-group :name="'fade-up'" tag="div" class="results">
       <div
@@ -66,7 +74,7 @@
     </transition-group>
   </div>
   <button
-    v-if="results.length > 0 && canLoadMore"
+    v-if="!useInfiniteScroll && results.length > 0 && canLoadMore"
     class="load-more"
     @click="loadMore"
   >
@@ -98,6 +106,7 @@ export default defineComponent({
   setup(_, { emit }) {
     const selectedSlug = ref<string | null>(null);
     const selectedOptionIndex = ref<number | null>(null);
+    const useInfiniteScroll = ref<boolean>(true);
 
     const searchStore = useSearchStore();
 
@@ -128,6 +137,24 @@ export default defineComponent({
       emit('loadMore');
     };
 
+    // Debounce function to limit the rate of scroll events
+    const debounce = (func: Function, delay: number) => {
+      let timeout: ReturnType<typeof setTimeout>;
+      return (...args: any[]) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func(...args), delay);
+      };
+    };
+
+    const handleScroll = debounce((event: Event) => {
+      const target = event.target as HTMLElement;
+      if (target.scrollTop + target.clientHeight >= target.scrollHeight - 10) {
+        if (useInfiniteScroll.value && !loading.value && canLoadMore.value) {
+          loadMore();
+        }
+      }
+    }, 200);
+
     const formatString = (
       template: string,
       dateValue: string,
@@ -142,6 +169,7 @@ export default defineComponent({
 
     const loading = computed(() => searchStore.loading);
     const error = computed(() => searchStore.error);
+    const canLoadMore = computed(() => searchStore.canLoadMore);
 
     return {
       loadMore,
@@ -153,6 +181,8 @@ export default defineComponent({
       error,
       clearSelection,
       selectOption,
+      handleScroll,
+      useInfiniteScroll,
     };
   },
 });
@@ -162,6 +192,11 @@ export default defineComponent({
 h2 {
   font-size: 2rem;
   margin: 2rem auto;
+  text-align: center;
+}
+
+.toggle-container {
+  margin-bottom: 20px;
   text-align: center;
 }
 
