@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
+import { useAuthStore } from './auth';
 import { Criteria, Result } from '../types';
 
-// Environment variables are loaded at build time and prepared for easier maintenance
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const MARKETPLACE_ID = import.meta.env.VITE_MARKETPLACE_ID;
 const LOCALE = import.meta.env.VITE_LOCALE;
@@ -10,7 +10,6 @@ const GEOCODES = import.meta.env.VITE_GEOCODES;
 
 export const useSearchStore = defineStore('search', {
   state: () => ({
-    jwtToken: '',
     results: [] as Result[],
     loading: false,
     error: '',
@@ -20,31 +19,12 @@ export const useSearchStore = defineStore('search', {
   }),
 
   actions: {
-    async loginAnonymously(): Promise<void> {
-      try {
-        this.loading = true;
-        this.error = '';
-
-        // Perform an anonymous login to get a JWT token
-        const response = await axios.post(`${API_BASE_URL}/loginAnonymously`);
-        this.jwtToken = response.data.jwt_token;
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          this.error = `Login failed: ${error.response.status} - ${error.response.data.message || error.response.statusText}`;
-        } else {
-          this.error = 'An unexpected error occurred while logging in.';
-          console.error('Unhandled login error:', error);
-        }
-        throw error;
-      } finally {
-        this.loading = false;
-      }
-    },
-
     async searchRestaurants(criteria: Criteria): Promise<void> {
+      const authStore = useAuthStore();
+
       // Ensure a valid JWT token is available
-      if (!this.jwtToken) {
-        await this.loginAnonymously();
+      if (!authStore.jwtToken) {
+        await authStore.loginAnonymously();
       }
       this.loading = true;
       this.error = '';
@@ -68,7 +48,7 @@ export const useSearchStore = defineStore('search', {
           },
           {
             headers: {
-              token: this.jwtToken,
+              token: authStore.jwtToken,
             },
           },
         );
@@ -81,13 +61,10 @@ export const useSearchStore = defineStore('search', {
             error.response.status === 400 &&
             error.response.data.message === '"Token expired"'
           ) {
-            await this.loginAnonymously();
+            await authStore.loginAnonymously();
             return this.searchRestaurants(criteria); // Retry with new token
           }
           this.error = `Search failed: ${error.response.status} - ${error.response.data.message || error.response.statusText}`;
-        } else if (!this.jwtToken) {
-          this.error =
-            'Missing authentication token. Please try logging in again.';
         } else {
           this.error = 'An unexpected error occurred during the search.';
           console.error('Unhandled search error:', error);
@@ -98,6 +75,8 @@ export const useSearchStore = defineStore('search', {
     },
 
     async fetchResults(): Promise<void> {
+      const authStore = useAuthStore();
+
       try {
         this.loading = true;
         this.error = '';
@@ -108,7 +87,7 @@ export const useSearchStore = defineStore('search', {
           { search_id: this.searchId },
           {
             headers: {
-              token: this.jwtToken,
+              token: authStore.jwtToken,
             },
           },
         );
@@ -123,7 +102,7 @@ export const useSearchStore = defineStore('search', {
             error.response.status === 400 &&
             error.response.data.message === '"Token expired"'
           ) {
-            await this.loginAnonymously();
+            await authStore.loginAnonymously();
             return this.fetchResults(); // Retry with new token
           }
           this.error = `Fetching results failed: ${error.response.status} - ${error.response.data.message || error.response.statusText}`;
@@ -139,6 +118,8 @@ export const useSearchStore = defineStore('search', {
     },
 
     async loadMoreResults(): Promise<void> {
+      const authStore = useAuthStore();
+
       this.loading = true;
       this.error = '';
 
@@ -149,7 +130,7 @@ export const useSearchStore = defineStore('search', {
           { search_id: this.searchId },
           {
             headers: {
-              token: this.jwtToken,
+              token: authStore.jwtToken,
             },
           },
         );
@@ -166,7 +147,7 @@ export const useSearchStore = defineStore('search', {
             error.response.status === 400 &&
             error.response.data.message === '"Token expired"'
           ) {
-            await this.loginAnonymously();
+            await authStore.loginAnonymously();
             return this.loadMoreResults(); // Retry with new token
           }
           this.error = `Loading more results failed: ${error.response.status} - ${error.response.data.message || error.response.statusText}`;
