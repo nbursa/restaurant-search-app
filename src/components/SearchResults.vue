@@ -1,9 +1,8 @@
 <template>
   <div v-if="error" class="error">{{ error }}</div>
   <div class="results-container">
-    <!-- Show loader only if there are results, and cover results container -->
-    <Loader :visible="!!results.length && loading" position="sticky" />
-    <div v-if="results.length" class="results">
+    <Loader :visible="!!results.length && loading" position="fixed" />
+    <transition-group :name="'fade-up'" tag="div" class="results">
       <div
         v-for="(result, index) in results"
         :key="result.post.slug"
@@ -64,7 +63,7 @@
           </button>
         </div>
       </div>
-    </div>
+    </transition-group>
   </div>
   <button
     v-if="results.length > 0 && canLoadMore"
@@ -188,6 +187,16 @@ h2 {
   transform: translateY(0);
   animation: fadeInUp 0.5s forwards ease-out;
   animation-delay: var(--delay);
+}
+
+.fade-up-enter-active,
+.fade-up-leave-active {
+  transition: all 0.5s ease-out;
+}
+.fade-up-enter-from,
+.fade-up-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
 }
 
 @keyframes fadeInUp {
