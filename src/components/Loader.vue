@@ -15,7 +15,7 @@ export default defineComponent({
       required: true,
     },
     position: {
-      type: String as PropType<'absolute' | 'sticky'>,
+      type: String as PropType<'absolute' | 'sticky' | 'fixed'>,
       default: 'absolute',
     },
     size: {
@@ -44,7 +44,7 @@ export default defineComponent({
   backdrop-filter: blur(2px);
   z-index: 1001;
   overflow: hidden;
-  min-height: 100%;
+  min-height: inherit;
   min-width: 100%;
   pointer-events: none;
 }
