@@ -7,6 +7,7 @@
       @reset="resetSearch"
     />
     <SearchResults
+      v-if="showResults"
       :results="results"
       :canLoadMore="canLoadMore"
       @loadMore="loadMore"
@@ -16,7 +17,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from 'vue';
+import { computed, defineComponent, ref } from 'vue';
 import { useSearchStore } from '../store/search';
 import SearchForm from '../components/SearchForm.vue';
 import SearchResults from '../components/SearchResults.vue';
@@ -30,12 +31,16 @@ export default defineComponent({
   setup() {
     const searchStore = useSearchStore();
 
+    const showResults = ref<Boolean>(false);
+
     const performSearch = async (criteria: Criteria) => {
       await searchStore.searchRestaurants(criteria);
+      showResults.value = true;
     };
 
     const resetSearch = () => {
       searchStore.results = [];
+      showResults.value = false;
     };
 
     const loadMore = async () => {
@@ -64,6 +69,7 @@ export default defineComponent({
       bookNow,
       results,
       canLoadMore,
+      showResults,
     };
   },
 });
